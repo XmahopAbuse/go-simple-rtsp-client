@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net"
 	"net/url"
-	"strings"
 )
 
 type Client struct {
@@ -68,7 +67,6 @@ func (c *Client) Options() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(buff))
 	return nil
 }
 
@@ -97,13 +95,7 @@ func (c *Client) Describe() (err error) {
 
 	n, err := c.conn.Read(buff)
 
-	// Check if the response is 401 Unauthorized
-	if strings.Contains(string(buff[:n]), "RTSP/1.0 401 Unauthorized") {
-		if strings.Contains(string(buff[:n]), "WWW-Authenticate: Digest") {
-			authHeader := strings.Split(string(buff[:n]), "WWW-Authenticate: Digest ")[1]
-			fmt.Println(authHeader, "header")
-		}
-	}
+	ParseRTSPResponse(buff[:n])
 
 	return  nil
 }
